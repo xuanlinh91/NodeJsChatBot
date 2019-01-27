@@ -4,9 +4,9 @@
         {
             "type": "endpoint",
             "name": "development",
-            "endpoint": "http://localhost:3978/api/messages",
-            "appId": "",
-            "appPassword": "",
+            "endpoint": "https://nodejschatbotxuanlinh.azurewebsites.net/api/messages",
+            "appId": "dc0c7e36-af32-445b-a454-4ce4bd78de1a",
+            "appPassword": "ednSIW5{^}jrdpYCZQ3506;",
             "id": "1"
         }
     ],
