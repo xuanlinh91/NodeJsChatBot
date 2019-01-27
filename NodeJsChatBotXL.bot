@@ -1,0 +1,54 @@
+{
+    "name": "NodeJsChatBotXL",
+    "description": "",
+    "services": [
+        {
+            "type": "abs",
+            "tenantId": "48f573d9-393b-49d5-965f-5c94094a572d",
+            "subscriptionId": "6fc5aa1e-0768-4548-af8c-6d0c7a17abac",
+            "resourceGroup": "resource_one",
+            "serviceName": "NodeJsChatBotXL",
+            "name": "NodeJsChatBotXL",
+            "id": "1",
+            "appId": "07429edd-c775-4f59-8556-32bf124e1d1a"
+        },
+        {
+            "type": "blob",
+            "connectionString": "DefaultEndpointsProtocol=https;AccountName=odeshat7mgw;AccountKey=LQZvtiOYM2W1fi+romG9lZOpn2NQ6AmjBZ7mk0vWWLG0zQWlpAqXnL2V5BPLsqA9Fz/igf/+E7IOqXc5iTp+5A==;",
+            "tenantId": "48f573d9-393b-49d5-965f-5c94094a572d",
+            "subscriptionId": "6fc5aa1e-0768-4548-af8c-6d0c7a17abac",
+            "resourceGroup": "resource_one",
+            "serviceName": "odeshat7mgw",
+            "id": "2"
+        },
+        {
+            "type": "endpoint",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages",
+            "name": "development",
+            "id": "3"
+        },
+        {
+            "type": "endpoint",
+            "appId": "07429edd-c775-4f59-8556-32bf124e1d1a",
+            "appPassword": "auNYWO14]@tvhwnLJX563[%",
+            "endpoint": "https://odeshatoth8ce.azurewebsites.net/api/messages",
+            "name": "production",
+            "id": "4"
+        },
+        {
+            "type": "appInsights",
+            "instrumentationKey": "ba0513d4-5c7b-43d1-9c57-48fa9775450b",
+            "applicationId": "19b2c14b-a4cc-46b9-9ea0-6b3a61980a31",
+            "apiKeys": {},
+            "tenantId": "48f573d9-393b-49d5-965f-5c94094a572d",
+            "subscriptionId": "6fc5aa1e-0768-4548-af8c-6d0c7a17abac",
+            "resourceGroup": "resource_one",
+            "serviceName": "NodeJsChatBotXLlsaty3",
+            "id": "5"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0"
+}
