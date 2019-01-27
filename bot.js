@@ -796,6 +796,8 @@ class MyBot {
                       } else {
                           var responseText = text.substring(8) + 'ccc (xd)';
                       }
+                    } else {
+                      responseText = text;
                     }
 
                     await turnContext.sendActivity(`${ responseText }`);
