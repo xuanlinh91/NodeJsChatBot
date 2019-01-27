@@ -782,7 +782,7 @@ class MyBot {
                     await turnContext.sendActivity(`Huỷ kèo đê :))`);
                     break;
                 default :
-                    if(text.substring(0,1) == '@'){
+                    if(text.substring(0,7) == 'nhơn :v'){
                       if(text.includes('kèo')){
                         var responseText = `Huỷ kèo đê :))`;
                       } else if(text.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')){
