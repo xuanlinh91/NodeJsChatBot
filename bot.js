@@ -4,14 +4,12 @@
 // Import required Bot Framework classes.
 const { ActivityTypes } = require('botbuilder');
 const { CardFactory } = require('botbuilder');
-var http = require("http");
+
 // Adaptive Card content
 // const IntroCard = require('./resources/IntroCard.json');
 
 // Welcomed User property name
 const WELCOMED_USER = 'welcomedUserProperty';
-
-const simSimiUrl = 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=';
 
 const swears = [
   'Đm :))',
@@ -751,32 +749,6 @@ class MyBot {
 
         this.userState = userState;
     }
-
-    async getSimSimiResponse(question){
-      var options = {
-          host: simSimiUrl + question,
-          method: "GET",
-          headers: {
-              "Content-Type": "application/json"
-          }
-      };
-
-      var req = http.request(options, function (res) {
-          var responseString = "";
-
-          res.on("data", function (data) {
-              responseString += data;
-              return responseString;
-          });
-          res.on("end", function () {
-              console.log(responseString);
-              // print to console when response ends
-          });
-      });
-
-      req.write();
-      req.end();
-    };
     /**
      *
      * @param {TurnContext} context on turn context object.
@@ -822,9 +794,7 @@ class MyBot {
                       } else if(text.includes('nói')){
                           var responseText = deadGroup[Math.floor(Math.random()*deadGroup.length)];
                       } else {
-
-                          var responseText = text.substring(8) + ' ccc (xd)';
-                          var responseText = await getSimSimiResponse(text.substring(8));
+                          var responseText = text.substring(8) + ' con củ kẹc (xd)';
                       }
                     } else {
                       responseText = text;
