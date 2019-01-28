@@ -794,7 +794,7 @@ class MyBot {
                       } else if(text.includes('nói')){
                           var responseText = deadGroup[Math.floor(Math.random()*deadGroup.length)];
                       } else {
-                          var responseText = text.substring(8) + ' ccc (xd)';
+                          var responseText = text.substring(8) + ' con củ kẹc (xd)';
                       }
                     } else {
                       responseText = text;
