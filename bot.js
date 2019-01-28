@@ -4,57 +4,59 @@
 // Import required Bot Framework classes.
 const { ActivityTypes } = require('botbuilder');
 const { CardFactory } = require('botbuilder');
-
+var http = require('http');
 // Adaptive Card content
 // const IntroCard = require('./resources/IntroCard.json');
 
 // Welcomed User property name
 const WELCOMED_USER = 'welcomedUserProperty';
 
+const simSimiUrl = 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=';
+
 const swears = [
-  'Đm :))',
-  'Đm dũng ngáo :))',
-  'giết thịt :))',
-  'Nói tiếng người đi :))',
-  'call nhé :))',
-  'mưa rồi :(',
-  'Thất bại :(',
-  'Ae chết cmn hết rồi à',
+    'Đm :))',
+    'Đm dũng ngáo :))',
+    'giết thịt :))',
+    'Nói tiếng người đi :))',
+    'call nhé :))',
+    'mưa rồi :(',
+    'Thất bại :(',
+    'Ae chết cmn hết rồi à',
 ];
 const bichui = [
-  'Con tinh trùng thất bại :))',
-  'Sủa tiếp :D',
-  'giết thịt :))',
-  'Người khôn nói ít, nghe nhiều, lựa lời đối đáp, lựa điều hỏi han.',
-  'Tu cái miệng là tu nửa đời :)',
-  'đcm :))',
-  'Chym to kệ em :v',
-  'Xạo loz ko có j vui, chúng ta  ko nên xạo loz :))',
+    'Con tinh trùng thất bại :))',
+    'Sủa tiếp :D',
+    'giết thịt :))',
+    'Người khôn nói ít, nghe nhiều, lựa lời đối đáp, lựa điều hỏi han.',
+    'Tu cái miệng là tu nửa đời :)',
+    'đcm :))',
+    'Chym to kệ em :v',
+    'Xạo loz ko có j vui, chúng ta  ko nên xạo loz :))',
 ];
 
 const deadGroup = [
-  'Ơ kìa không ai nói gì đi à?',
-  'Group chán vl, vote xoá group',
-  '/me Cảm thấy lạnh lẽo...',
-  'Group nát bét thật rồi',
-  'Đéo còn ai ở group này nói chuyện với tôi cả, không còn ai...đi chung một đường....',
-  'mưa rồi :(',
-  'Thất bại :(',
-  'Ae chết cmn hết rồi à',
-  ,
-  `Đĩa đậu phộng
+    'Ơ kìa không ai nói gì đi à?',
+    'Group chán vl, vote xoá group',
+    '/me Cảm thấy lạnh lẽo...',
+    'Group nát bét thật rồi',
+    'Đéo còn ai ở group này nói chuyện với tôi cả, không còn ai...đi chung một đường....',
+    'mưa rồi :(',
+    'Thất bại :(',
+    'Ae chết cmn hết rồi à',
+    ,
+    `Đĩa đậu phộng
   Boris rủ bạn Vova đến thăm bà ngoại. Bà nhờ Boris sửa vòi nước trong bếp. Vova ngồi ngoài phòng khách chờ, tranh thủ nhấm nháp hết đĩa đậu phộng để trên bàn. Khi cùng bạn ra về, Vova cảm ơn bà và phân bua:
   - Cháu cảm ơn bà về đĩa đậu phộng. Cháu đã lỡ ăn hết không chừa lại một hạt nào cho bà.
   - Không sao, lúc trước nó còn là đĩa chocolate cơ đấy! Vì không có răng, nên bà đã mút hết lớp vỏ chocolate bao quanh hạt đậu phộng rồi.
   -Vova ủa ?!!!
-  `,`
+  `, `
 
   Vova tập vẽ
   Bố của trò Vova bị cô giáo mời đến gặp. Khắp mình ông dán đầy bông băng, ông mặc váy vừa lê bước vào đã nghe cô kể tội con mình:
   - Bác xem này! Em Vova vẽ con ruồi lên cái đinh trên bàn giáo viên. Tôi đập một nhát, chảy cả máu tay.
   - Trời ơi! Thế là còn nhẹ. Cô nhìn cái của tôi xem, đây là hậu quả của việc nó vẽ mẹ nó trên đống thủy tinh đấy!
   - Úi chao!
-  `,`
+  `, `
 
   Cọ “C”
   Họp phụ huynh, cô giáo than phiền với bố Vova:
@@ -64,7 +66,7 @@ const deadGroup = [
   Bố Vova trả lời thế làm cô giáo giận lắm, kể lại chuyện đó cho mẹ Vova nghe. Mẹ Vova nói:
   - Hai bố con nó không nói láo đâu cô ạ. Thằng Vova cãi nhau với thằng hàng xóm Petka. Tối nào Petka cũng lấy sơn viết lên cửa nhà tôi chữ C. to tướng, sáng ra tôi bắt hai bố con nó phải cọ sạch cho nên cháu nó đi học muộn đấy ạ.
 
-  `,`
+  `, `
   Lập chiến công
 
   Băng trên sông sắp tan. Có một cậu bé đang chìm dần xuống nước. Vôva nhảy
@@ -75,7 +77,7 @@ const deadGroup = [
   Vôva
   - Ơ, biết kể cái gì bây giờ? Thôi được rồi. Đầu tiên em cho cái thằng ngu đó mượn
   bánh xe trượt băng….
-  `,`
+  `, `
 
   Vova trong giờ học vẽ
   Giờ họa, cô giáo dạy các em học sinh lớp hai vẽ trái tim. Cô vẽ mẫu trên bảng xong rồi quay xuống:
@@ -88,7 +90,7 @@ const deadGroup = [
   - Sao vậy?
   - Ở nhà lúc ngủ dậy, em nghe ba em nói với mẹ: “Trái tim của anh ơi, anh mặc áo quần cho em nhé!”
 
-  `,`
+  `, `
   Mua xe tăng cho Vova
 
   Nhà Vova chật lắm, thời ngày xưa nhà được phân phối, không mất tiền, cho nên chỉ 17m2 là quý roài! Kệ, túp lều tranh, trái tim vàng!
@@ -106,7 +108,7 @@ const deadGroup = [
   Bố mẹ nhảy dựng lên, hớt hải : Sao mày biết ?
   Vova: À, Con bé Natasa con học cũng đang đứng ban công nhìn sang đây mà!
 
-  `,`
+  `, `
 
   Vova trong giờ kể chuyện..
 
@@ -124,7 +126,7 @@ const deadGroup = [
   - Em có biết tuần này đã bị điểm 2 lần thứ ba rồi không? Vova :
   - Thưa cô, em đã hiểu ý nghĩa câu: “Ghét của nào trời trao của ấy”.
 
-  `,`
+  `, `
   Vova vào lớp 1
   Bé Vôva vào lớp 1. Để buổi đi học đầu tiên của các cháu được hứng thú, cô giáo bắt đầu bằng trò chơi đố vui. Cô nghĩ đến cái bàn, rồi đặt câu hỏi :
   - Đố các em, trong nhà ta có cái gì bằng ǵỗ, có 4 chân?
@@ -141,7 +143,7 @@ const deadGroup = [
   Nước mắt lưng tṛong, bé Vôva thút thít trả lời:
   - Cái mà cô nghĩ cũng được đấy, nhưng câu trả lời của em là những que diêm cơ…
 
-  `,`
+  `, `
 
   Bố của Vova
   Hàng ngày Vôva thấy mẹ quát tháo bố, mỗi khi ông quá chén hoặc đôi khi bố Vôva quện chưa lau nhà, một hôm Vôva hỏi.
@@ -152,7 +154,7 @@ const deadGroup = [
   - E hèm, ông nói lúc nào ấy nhỉ?
   - Hì hì àh hôm trước anh chui vào gầm giường tìm cái bút chẳng may bị mắc kẹt,em lấy cán chổi lùa mãi anh mới ra được đấy!!!! may quá không có em thì chết…
 
-  `,`
+  `, `
   Vova khó ngủ
 
 
@@ -167,12 +169,12 @@ const deadGroup = [
   -cô ?!!
 
 
-  `,`
+  `, `
   Sao qua mặt được vova
   Vova học lớp một. Cô giáo lên lớp đứng trên bục giảng sơ ý thả một tiếng thơ ngọt ngào “pứ”. Xong cô giáo giả vờ làm rơi phấn, rơi thước kẻ, xoa xoa gót giầy xuống sàn, di di tay lên bảng… hòng che đi.
   Vova ngồi ngay bàn một, thấy cô giáo làm nhiều trò quá thản nhiên thốt ra buông thõng một câu: “Đếch giống!”
 
-  `,`
+  `, `
   Con trai của Vova.
   Vova cùng ba ông bạn cũ lâu ngày không gặp tình cờ hội ngộ trong một nhà hàng sang trọng. Trong khi vova đi vệ sinh thì ba ông kia bắt đầu khoe khoang về sự thành đạt của con cái mình. Một ông nói:
   - Tôi tự hào về thằng con trai của tôi. Nó là một nhà kinh doanh địa ốc có tên tuổi và kiếm được rất nhiều tiền. Vì thế, nó rất hay làm việc từ thiện. Tuần trước, nó vừa hiến tặng một lô đất rộng ở ngoại ô thành phố.
@@ -182,7 +184,7 @@ const deadGroup = [
   - Nhiều lúc tôi cũng không giấu được niềm tự hào về thằng con tôi. Nó kiếm được rất nhiều tiền và cũng thích làm từ thiện. Tuần trước, nó vừa hiến tặng một ngôi nhà trị giá 1 triệu đôla.
   Đúng lúc này,vova quay lại. Sau khi biết về chủ đề mọi người đang bàn tán, vova cũng kể thành tích của con trai mình:
   - Thằng con tôi thu nhập khá lắm. Nó làm vũ công thoát y ở một câu lạc bộ đồng tính luyến ái. Tuần trước, nó kiếm được một lô đất rộng, một chiếc Ferrari và một ngôi nhà trị giá 1 triệu đôla.
-  `,`
+  `, `
 
   Đoán tuổi…
 
@@ -192,7 +194,7 @@ const deadGroup = [
   - Thế thì cậu nhìn ” kia ” xem có thấy gì không ?. Nói xong VôVa hất hàm về phía cô gái đối diện.
   - …….. ! ( Thằng bé nhún vai lắc đầu )
   - Thế thì cậu khoảng 4 tuổi. VôVa đáp !
-  `,`
+  `, `
 
   Vova nghĩ bậy.
   Vova đi chơi với Nana. Vova chọn 1 cái ghế đá ngồi xuống, khổ đây là lần đầu tiên nên Vova lúng túng lắm không biết nói gì cả. Nghĩ mãi Vova đanh liều nói 1 câu :
@@ -201,7 +203,7 @@ const deadGroup = [
   Bỗng Vova cười ha hả:
   - Khiếp sao ấy bậy thế!!!!!!!
 
-  `,`
+  `, `
   Vova đi siêu thị.
   Vôva dắt em nó đi vào một siêu thị, chọn một bịch băng vệ sinh phụ nữ rồi mang ra quầy tính tiền. Lấy làm lạ, cô thu ngân nhìn chằm chằm vào hai đứa bé, rồi không nén nổi tò mò, cô hỏi.
   - Cháu bao nhiêu tuổi rồi?
@@ -211,7 +213,7 @@ const deadGroup = [
   - Cháu không rõ lắm. Nhưng thứ này không phải để cho cháu, mà cho thằng em cháu. – Vôva chỉ tay vào đứa em đi bên cạnh.
   - Cho em cháu? – Cô gái tròn mắt ngạc nhiên.
   - Đúng thế. Nó lên bốn tuổi. Chúng cháu xem trên tivi và thấy người ta nói rằng, nếu sử dụng thứ này, có thể bơi và đi xe đạp. Mà nó thì lại chưa biết cả hai thứ ấy…
-  `,`
+  `, `
 
 
   Chóng lớn
@@ -222,7 +224,7 @@ const deadGroup = [
   - Vô ích – thằng bé lắc đầu – ngày mai cô hàng xóm lại sang thổi cho nó to lên thôi,
   - ?!!
 
-  `,`
+  `, `
   Nguồn gốc.
   Cô giáo giảng giải nguồn gốc loài người xuất phát từ sự tò mò của Adam và
   Eva. Vova giơ tay:
@@ -230,7 +232,7 @@ const deadGroup = [
   Natasha quay sang bảo:
   - Vova, cô giáo đâu có nói riêng nguồn gốc gia đình cậu
 
-  `,`
+  `, `
 
   Tè bằng gì?
   Một lần Vôva hỏi đứa bạn gái cùng lớp 1
@@ -239,7 +241,7 @@ const deadGroup = [
   Vôva lại hỏi, không biết Cô giáo tè bằng cái gì nhỉ?
   Đứa bạn gái của Vôva liền chạy đi xem, lúc sau nó chạy lại và thì thầm:
   Tớ thấy cô giáo tè bằng gì rồi “Cô ấy tè bằng bàn chải”
-  `,`
+  `, `
 
   Bom trong bụng
   Vôva và bạn nó là Pechia nhìn thấy 1 người đàn ông trần truồng có cái bụng rất to trong bồn tắm. Hai đứa liền hỏi:
@@ -248,7 +250,7 @@ const deadGroup = [
   Vôva cầm sẵn lửa và thì thầm vào tai Pechia:
   - Chúng mình làm cho nó nổ đi.
   Penchia: Không được!!! Ngòi ngắn quá, nguy hiểm lắm…
-  `,`
+  `, `
 
   Ngây thơ.
 
@@ -260,14 +262,14 @@ const deadGroup = [
   - Tội nghiệp, ông già rồi mà còn ngây thơ quá. Hay chúng mình nói cho ông biết
   là bệnh gì đi?
 
-  `,`
+  `, `
   Không đẻ được.
 
   Một hôm Natasa mặt mày hớn hở khoe với Vova:
   - Tớ biết người lớn làm thế nào để đẻ con rồi.
   Vova tặc lưỡi:
   - Tưởng gì… Tớ còn biết làm thế nào để không đẻ được nữa kia!
-  `,`
+  `, `
 
   Lớp một lên thẳng đại học.
   Vova năm nay 6 tuổi học lớp 1.
@@ -301,7 +303,7 @@ const deadGroup = [
   Ông hiệu trưởng đổ mồ hôi hột ra dấu bảo cô giáo đừng hỏi nữa và nói với Vova :
   - Thầy cho con lên thẳng đại học vì nãy giờ thầy đáp không trúng được câu nào hết !!!
 
-  `,`
+  `, `
   Chân lý.
   Một hôm Vova tới lớp cô giáo dạy học sinh về môt chân lý ” có công mài sắt có ngày nên kim”,
   Cô ví dụ: nếu chúng ta chịu khó nuôi một đàn gà thì sau này chúng ta sẽ thu được sẽ là những quả trứng thật ngon lành.
@@ -310,7 +312,7 @@ const deadGroup = [
   Cô giáo tức giận liền gọi Vova đứng dậy và đuổi ra ngoài, khi ra ngoài Vova vẫn cố ngoảnh lại và nói ” em sẽ nuôi một đàn vịt”…
   Cô:??!!
 
-  `,`
+  `, `
   Phòng riêng của Vova.
   Bố Vôva đến đón con ở nhà trẻ, vào phòng thứ nhất có biẻn đề “học sinh ngoan” nhìn quanh không thấy Vôva đâu cả.
   Vào phòng thứ 2 “học sinh trung bình” không thấy Vôva
@@ -318,7 +320,7 @@ const deadGroup = [
   Vào phòng thứ 4 “học sinh đặc biệt hư” cũng không thấy Vôva đâu
   Bố Vôva đi đến cuối hành lang, thấy có một phòng nhỏ, biển treo bên ngoài đề “Vôva”.
 
-  `,`
+  `, `
   Đi tham quan công trường
 
   Vừa tới nơi thì xảy ra tai nạn: một công nhân rơi từ tầng 4 ngôi nhà mới xây xuống đất. Sau buổi tham quan cô giáo tập trung học sinh lại để rút ra bài học từ trường hợp trên:
@@ -333,7 +335,7 @@ const deadGroup = [
   - Thế là thế nào?
   - Chú ấy bảo: thằng ôn kia, đừng có rung thang nữa!
 
-  `,`
+  `, `
   Tại cô
   Cô giáo bảo Vova:
   - Em học lười thì chỉ làm khổ bố mẹ thôi.
@@ -343,12 +345,12 @@ const deadGroup = [
   - Thoáng đỏ mặt, cô giáo hỏi lại. Em nói rõ hơn đi?
   - Vâng ạ, vì cô cho nhiều bài tập về nhà quá, bố em làm không xuể.
 
-  `,`
+  `, `
   Vova học lớp 3
   Vova học lớp 3 mến một cô bạn học cùng lớp lắm mà không dám nói ra. Nhưng để lâu không chịu được, một hôm cậu đánh bạo gửi cho cô bạn một mảnh giấy ghi: “Bạn ơi, mình mến bạn lắm. Chiều nay chúng mình ra công viên cho mình nắm tay nhé”.
   Cậu tức khắc nhận được một mnh giấy tương tự từ phía cô bạn. Đáp lại sự hồi hộp của cậu, trên đó ghi:”Nếu ra công viên chỉ để nắm tay nhau thì bạn xuống lớp 2 mà học”.
 
-  `,`
+  `, `
   Chỉ lấy một đồng.
   1 hôm, cô hàng xóm gọi vôva sang và hỏi:
   - vôva nếu cô cho cháu chọn giưa 10 đồng và 1 đồng, cháu lấy cái nào!
@@ -362,7 +364,7 @@ const deadGroup = [
   vôva liền bịt miệng mẹ và nói thầm,:
   -khẽ thôi mẹ ơi, con mà lấy 10 đồng thì con chỉ được 10 đồng thôi, còn bây giờ
   con có hơn 30 đồng rồi nhé!
-  `,`
+  `, `
 
 
   Vova học lớp 1
@@ -397,7 +399,7 @@ const deadGroup = [
   - Thầy cho con… lên thẳng đại học, vì nãy giờ thầy… đáp không trúng được câu nào hết!?!
   Vova: – ?!!!
 
-  `,`
+  `, `
   Cái mông
 
   Giờ học đầu tiên môn hình học lớp 7. Cô giáo vẽ lên bảng 1 cái vòng tròn và đường kính.
@@ -416,7 +418,7 @@ const deadGroup = [
   Natasha băn khoăn đáp:
   - Lớn lên em sẽ lấy chồng, nhưng chẳng biết nó hình gì?
 
-  `,`
+  `, `
   Cuộc sống hiện đại
 
 
@@ -427,7 +429,7 @@ const deadGroup = [
   Vova: Em mang máy trợ tim của ông nội ạ.
   Cô giáo: Thôi chết, thế ông có mắng em không?
   Vova: Không ạ, ông chẳng có ý kiến gì đâu. Ông chỉ ặc ặc 2 tiếng thôi ạ
-  `,`
+  `, `
 
   Quân đội không có phụ nữ.
 
@@ -436,14 +438,14 @@ const deadGroup = [
   Cả lớp im phăng phắc, chỉ có mỗi Vova giơ tay. Cô giáo chờ một lúc đành phải mời Vô va phát biểu.
   Vova: Thưa cô, vì khi nghe khẩu lệnh “Nằm xuống“ thì phụ nữ toàn nằm ngửa ra!
 
-  `,`
+  `, `
   Bác sĩ Vova.
   Lớn lên Vova đi làm bác sĩ, một hôm găp một bệnh nhân rất khó tính và không ai dám làm việc mà anh ta yêu cầu.
   Vova gặp và gọi anh ta đến bệnh viện,anh chàng bước vào bệnh viện, đòi giải phẫu cái…ấy của anh ta cho dài đụng đất và trả trước một khoản tiền lớn. Sau khi đuợc chụp thuốc mê, anh ta không còn biết gì.
   Hôm sau tỉnh lại, nhìn thấy đôi chân của mình đã bị cắt cụt tới tận bẹn, anh ta cự nự bác sĩ.
   Bác sĩ Vova từ tốn trả lời : “Anh muốn cái …ấy dài đụng đất mà, anh xem xem nó có đụng đất chưa ? “
 
-  `,`
+  `, `
   Vova học giỏi.
 
 
@@ -469,7 +471,7 @@ const deadGroup = [
   Hiệu trưởng:
   - Tôi nghĩ rằng có thể chuyển Vova lên thẳng lớp 5, bởi vì 2 câu hỏi cuối cùng, đến tôi thậm chí còn nhầm
 
-  `,`
+  `, `
   Vova làm việc tốt.
   Vova chạy về nhà khoe với mẹ.
   - Hôm nay con đã làm được 1 việc tốt.
@@ -485,7 +487,7 @@ const deadGroup = [
   - Không vẫn 1 bà cụ hôm qua thôi, hôm nay con và các bạn phải vất vả lắm mới đưa được bà cụ qua đường 35 lần đấy. Bà cụ ấy già rồi mà quẫy khoẻ lắm.
   -Mẹ ?!!!
 
-  `,`
+  `, `
   Vova học chữ cái.
   Cô giáo nói với học sinh:
   - Các em, hôm nay chúng ta học chữ cái “C”.
@@ -494,7 +496,7 @@ const deadGroup = [
   Cô giáo:
   - Vova ngồi im đấy! Em còn chưa mời phụ huynh tới gặp tôi vì buổi học hôm trước với chữ cái “B”.
 
-  `,`
+  `, `
   Suy nghĩ của cô.
 
   Trong lớp học, cô giáo hỏi Vôva:
@@ -509,7 +511,7 @@ const deadGroup = [
   - Vôva trả lời:
   - Thưa cô, người có chồng là người tay có đeo nhẫn cưới. Tuy nhiên, em rất thích kiểu suy nghĩ của cô.
 
-  `,`
+  `, `
   Giờ học sinh vật.
   Trong giờ sinh vật, cô giáo hỏi học sinh:
   - Tại sao con cá thờn bơn lại mỏng dẹt vậy?
@@ -520,7 +522,7 @@ const deadGroup = [
   Vova đã ra tới cửa:
   - Đơn giản là con tôm cũng có mặt ở cạnh đó và trông thấy tất cả.
 
-  `,`
+  `, `
   Bông hồng có chân.
 
   Bé Vova đi học lớp 1. hôm nay cô giáo dạy vẽ và kêu mỗi bé hãy tự vẽ một bông
@@ -533,7 +535,7 @@ const deadGroup = [
   hồng có chân ko?”
   Vova ngây thơ mắt ngấn lệ : thưa cô vì tối qua con nghe ba con nói với mẹ con
   rằng “bông hồng bé nhỏ của anh ơi, em hãy…….. dang hai chân ra đi!”
-  `,`
+  `, `
 
   Cô nghĩ cũng được đấy
   Bé Vôva vào lớp 1. Để buổi đi học đầu tiên của các cháu được hứng thú, cô giáo bắt đầu bằng trò chơi đố vui.
@@ -551,7 +553,7 @@ const deadGroup = [
   Nước mắt lưng trong, bé Vôva thút thít trả lời:
   - Cái mà cô nghĩ cũng được đấy, nhưng câu trả lời của em là những que diêm cơ…
 
-  `,`
+  `, `
   Vova thi học kỳ
   Đây là kỳ thi vấn đáp, thầy giáo hỏi:
   - Thế cậu có biết trong phòng này có mấy cái đèn không?
@@ -567,7 +569,7 @@ const deadGroup = [
   - Nhưng em có mang theo, thưa thầy!!!
   Vova rút trong túi quần ra 1 cái bóng đèn!!!
 
-  `,`
+  `, `
   Chờ.
 
 
@@ -578,7 +580,7 @@ const deadGroup = [
   Vova: Dạ một chị đòi lột quần chị kia nên em cứ chờ mãi ạ!
   cô giáo: ????
 
-  `,`
+  `, `
 
   Hơn mẩu socola.
   Một phái đoàn kiểm tra đến nhà trẻ. Các nhân viên phát cho mỗi em một thanh sô cô la hình cô/cậu bé. Đến lượt Vova, nhân viên hỏi:
@@ -587,7 +589,7 @@ const deadGroup = [
   - Tại sao thế?
   - Vì hình cậu bé thì cháu được thêm một mẩu mà các hình cô bé không có.
 
-  `,`
+  `, `
   Papa để làm gì?
   Vova hỏi mẹ:
   - Mama, Có phải sự thật là chúng ta được chúa nuôi không?
@@ -598,7 +600,7 @@ const deadGroup = [
   - Đúng.
   - Vậy thì chúng ta cần Papa để làm gì?!!
 
-  `,`
+  `, `
   Cái lò xo.
   Trong giờ học tiếng Nga, Vôva ngồi bàn đấu cứ loáy hoáy ngó nghiêng cái bút bi, thỉnh thoảng lại bấm tách tách. Cô giáo quát:
   -Em đang làm trò gì thế Vôva? Không được mất trật tự
@@ -612,14 +614,14 @@ const deadGroup = [
   Bố Vova liên tháo tung cái bút bi, ngó nghiêng 1 hồi, bỗng thốt lên
   - Đây rồi, tất cả là tại cái này. Có 1 cái lò xo nằm ở trong đó
 
-  `,`
+  `, `
   An toàn lao động
 
   Trong giờ học môn lao động, thầy giáo giảng cho học sinh về kỹ thuật an toàn trong lao động. Thầy giáo dẫn ví dụ:
   - Có cậu bé đang đi ngoài phố, bỗng có viên gạch rơi xuống đầu, và cậu ta chết ngay tại chỗ! Còn cô bé đội mũ bảo hiểm, cũng bịviên gịch rơi xuống đầu, nhưng cô bé chỉ mỉm cười và đi tiếp!
   Giọng Vova:
   - Vâng em biết cô ta! Cô ấy đến bây giờ vẫn đội mũ bảo hiểm và vừa đi vừa mỉm cười!
-  `,`
+  `, `
 
   Vova tỏ tình.
   Vova thường ngồi chung xe bus với Natasa. Một hôm, Vova lấy hết dũng cảm dúi cho Natasa một mẩu giấy, trên đấy viết:
@@ -627,7 +629,7 @@ const deadGroup = [
   Một lúc sau Natasa chuyển lại mẩu giấy cũ, Vova vui mừng mở ra xem, trên giấy viết:
   “cửa sổ đóng không mở được”
 
-  `,`
+  `, `
   Con nít có thể có thai không
   Khi Vova đi học trường mầm non, một hôm Vova hỏi cô giáo:
   -Cô ơi, con nít có thể có thai không cô.
@@ -636,21 +638,21 @@ const deadGroup = [
   Vova liền chạy tới đứa bạn gái nói :
   -Đó, em không phải sợ đâu
 
-  `,`
+  `, `
   Còn đau hơn
   Bố của trò Vova bị cô giáo mời đến gặp. Khắp mình dán đầy bông băng, ông vừa lê bước vào đã nghe cô kể tội con mình:
   - Bác xem này! Em Vova vẽ con ruồi lên cái đinh trên bàn giáo viên. Tôi đập một nhát, chảy cả máu tay.
   - Trời ơi! Thế là còn nhẹ. Cô nhìn cái thân tôi xem, đây là hậu quả của việc nó vẽ mẹ nó trên đống thủy tinh đấy.
   - Úi chao!
 
-  `,`
+  `, `
   Vova và ông đọc truyện.
   Thấy ông nội rất chăm chú vào cuốn sách, Vô va quay sang hỏi ông : ”Ông ơi, ông đọc truyện gì thế” ?
   Ông nhẹ nhàng trả lời : ”Truyện lịch sử cháu ạ“.
   Với vẻ nghi hoặc, Vô va ngó vào quyển truyện của ông, giọng rất bức xúc : ”Ông đọc truyện xxx, thế mà ông nói dối cháu “.
   Ông lại nhẹ nhàng, vẻ mặt buồn chán : “Với cháu là truyện xxx, còn với ông, nó là lịch sử rồi cháu ạ”.
 
-  `,`
+  `, `
   Kẻ ngu ngốc.
 
 
@@ -660,13 +662,13 @@ const deadGroup = [
   - Vova, em tự cho mình là kẻ ngu ngốc?
   - Không ạ, nhưng để thầy đứng một mình như vậy thì …..
 
-  `,`
+  `, `
   Xác nhận vấn đề
   Vova thường ngồi chung xe bus với Natasa. Một hôm, Vova lấy hết dũng cảm dúi cho Natasa một mẩu giấy, trên đấy viết:
   - "Tôi rất thích bạn, nếu bạn đồng ý kết bạn với tôi thì hãy đưa lại mẩu giấy này cho tôi, còn nếu không đồng ý thì hãy vứt nó qua cửa sổ".
   - Một lúc sau Natasa chuyển lại mẩu giấy cũ, Vova vui mừng mở ra xem, trên giấy viết: "Không mở được cửa sổ!"
 
-  `,`
+  `, `
   Khỉ đẹp quá.
 
 
@@ -675,7 +677,7 @@ const deadGroup = [
   Nana đáp : đây là chó mà Vova.
   Vova trả lời: tớ đang nói truyện với con chó này mà.
 
-  `,`
+  `, `
   Vova thích gì?
   Trong giờ học, cô giáo:
   - Các em chú ý, hãy nhìn cô và nói xem các em thích cái gì trên người cô và cô sẽ nói cho biết lớn lên các em làm gì!
@@ -685,7 +687,7 @@ const deadGroup = [
   - Cám ơn Pêchia, lớn lên em sẽ trở thành bác sỹ nhãn khoa giỏi. Thế còn Vôva, em nói gì đi chứ, đừng có xịu mặt như vậy.
   Vôva: – Thưa cô, em biết nói gì bây giờ? Bố mẹ em chắc sẽ buồn lắm khi biết em chỉ làm một công nhân vắt sữa bò ở nông trại…
 
-  `,`
+  `, `
   Nhắc khéo…
   Trong giờ học về phép lịch sự, thầy giáo giảng: “Trong xã hội hiện đại, chúng ta luôn phải cư xử hết sức tế nhị và lịch thiệp, đặc biệt với phụ nữ”.
   - Ví dụ khi thấy váy của cô gái bị vấy bẩn thì các em nên nhắc một cách khéo léo như “trên vai cô có vết bẩn đấy”. Cô gái sẽ nhìn xuống vết bẩn trên váy mình…
@@ -694,7 +696,7 @@ const deadGroup = [
   Vova gãi đầu gãi tai chưa biết trả lời sao thì nhìn thấy thầy giáo quên cài khóa quần. Vova liền cho ví dụ:
   - Thưa thầy! Dây kéo trên cà-vạt của thầy bị tuột đấy ạ!
 
-  `,`
+  `, `
   Ước mơ tuổi thơ
   Ước mơ tuỏi thơ:
   Na ta sa: Lớn lên em làm bác sĩ
@@ -703,7 +705,7 @@ const deadGroup = [
   - Sao vậy?
   - Chị em có đám lông bằng bàn tay mà nó đã kiếm được bộn tiền.
 
-  `,`
+  `, `
   Vova trồng… củ cải bên trong Pijama
   Vova về già trồng được một giống củ cải cho năng suất rất cao. Ông vẫn thường tự hào rằng củ cải của mình là to nhất.
   Một hôm thằng con ông đang học trên trường Nông nghiệp của tỉnh về chơi có biếu ông bộ quần áo.
@@ -715,7 +717,7 @@ const deadGroup = [
   - Củ cải này chưa to, củ cải trong Pijama của tôi còn to hơn nhiều!
   - ?!
 
-  `,`
+  `, `
   Chạy nước gì….?
 
   Trong giờ sinh vật giảng về con ngựa.
@@ -725,7 +727,7 @@ const deadGroup = [
   Vova: thưa cô nước….tiểu ạ
 
   `,
-  `
+    `
   Vova trông em.
 
 
@@ -735,7 +737,8 @@ const deadGroup = [
   - Không phải thế! Em đã ăn hết mồi câu của con.
   ];
   `
-]
+];
+
 class MyBot {
     /**
      *
@@ -749,6 +752,33 @@ class MyBot {
 
         this.userState = userState;
     }
+
+    async getSimSimiResponse(question) {
+        var options = {
+            host: simSimiUrl + question,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        var req = http.request(options, function(res) {
+            var responseString = '';
+
+            res.on('data', function(data) {
+                responseString += data;
+                return responseString;
+            });
+            res.on('end', function() {
+                console.log(responseString);
+                // print to console when response ends
+            });
+        });
+
+        req.write();
+        req.end();
+    };
+
     /**
      *
      * @param {TurnContext} context on turn context object.
@@ -775,32 +805,33 @@ class MyBot {
                 // Consider using LUIS or QnA for Natural Language Processing.
                 let text = turnContext.activity.text.toLowerCase();
                 switch (text) {
-                case 'hello':
-                    await turnContext.sendActivity(`Chào em :) ${ text }`);
-                    break;
-                case text.includes('kèo'):
-                    await turnContext.sendActivity(`Huỷ kèo đê :))`);
-                    break;
-                default :
-                    if(text.substring(0,7) == 'nhơn :v'){
-                      if(text.includes('kèo')){
-                        var responseText = `Huỷ kèo đê :))`;
-                      } else if(text.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')){
-                          var responseText = bichui[Math.floor(Math.random()*bichui.length)];
-                      } else if(text.includes('ơi')){
-                          var responseText = `Dạ :v`;
-                      } else if(text.includes('thằng nào') || text.includes('đứa nào') || text.includes('là ai')){
-                          var responseText = `Em là nhơn ạ :v`;
-                      } else if(text.includes('nói')){
-                          var responseText = deadGroup[Math.floor(Math.random()*deadGroup.length)];
-                      } else {
-                          var responseText = text.substring(8) + ' con củ kẹc (xd)';
-                      }
-                    } else {
-                      responseText = text;
-                    }
+                    case 'hello':
+                        await turnContext.sendActivity(`Chào em :) ${ text }`);
+                        break;
+                    case text.includes('kèo'):
+                        await turnContext.sendActivity(`Huỷ kèo đê :))`);
+                        break;
+                    default :
+                        if (text.substring(0, 7) === 'nhơn :v') {
+                            if (text.includes('kèo')) {
+                                var responseText = `Huỷ kèo đê :))`;
+                            } else if (text.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')) {
+                                var responseText = bichui[Math.floor(Math.random() * bichui.length)];
+                            } else if (text.includes('ơi')) {
+                                var responseText = `Dạ :v`;
+                            } else if (text.includes('thằng nào') || text.includes('đứa nào') || text.includes('là ai')) {
+                                var responseText = `Em là nhơn ạ :v`;
+                            } else if (text.includes('nói')) {
+                                var responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
+                            } else {
+                                // var responseText = text.substring(8) + ' con củ kẹc (xd)';
+                                var responseText = await getSimSimiResponse(text.substring(8));
+                            }
+                        } else {
+                            responseText = text;
+                        }
 
-                    await turnContext.sendActivity(`${ responseText }`);
+                        await turnContext.sendActivity(`${ responseText }`);
                 }
             }
             // Save state changes
@@ -830,8 +861,8 @@ class MyBot {
                 // bot was added to the conversation, and the opposite indicates this is a user.
                 if (turnContext.activity.membersAdded[idx].id !== turnContext.activity.recipient.id) {
                     await turnContext.sendActivity(`Hello :))`);
-                    await turnContext.sendActivity("Chào mừng đến với chùa cụ tổ bà đanh (xd)");
-                    await turnContext.sendActivity(swears[Math.floor(Math.random()*swears.length)]);
+                    await turnContext.sendActivity('Chào mừng đến với chùa cụ tổ bà đanh (xd)');
+                    await turnContext.sendActivity(swears[Math.floor(Math.random() * swears.length)]);
                 }
             }
         }
