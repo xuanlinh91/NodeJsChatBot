@@ -20,7 +20,7 @@ const simSimiUrl = 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4
 //     api: 'http://sandbox.api.simsimi.com/request.p'
 // });
 
-const simsimi = require('./simsimi.js');
+// const simsimi = require('./simsimi.js');
 
 const swears = [
     'Đm :))',
