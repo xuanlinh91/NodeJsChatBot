@@ -794,7 +794,7 @@ class MyBot {
             var text = turnContext.activity.text.toLowerCase();
             console.log(text);
             console.log(text.substring(8));
-            this.getSimSimiResponse(text.substring(8)).then(function(data) {
+            await this.getSimSimiResponse(text.substring(8)).then(function(data) {
                 responseText = data.response;
                 console.log(responseText);
                 // turnContext.sendActivity(`${ responseText }`);
