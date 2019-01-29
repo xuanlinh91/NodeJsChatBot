@@ -780,9 +780,7 @@ class MyBot {
             // Your bot should proactively send a welcome message to a personal chat the first time
             // (and only the first time) a user initiates a personal chat with your bot.
 
-            await this.getSimSimiResponse(text.substring(8)).then(function(data) {
-                responseText = data.response;
-            });
+            let key = text.substring(0, botname.length) === botname ? text.substring(botname.length + 1) : text;
 
             if (didBotWelcomedUser === false) {
                 // The channel should send the user name in the 'From' object
@@ -795,32 +793,33 @@ class MyBot {
                 // This example uses an exact match on user's input utterance.
                 // Consider using LUIS or QnA for Natural Language Processing.
 
-                switch (text) {
+                switch (key) {
                 case 'hello':
                     await turnContext.sendActivity(`Chào em :) ${ text }`);
                     break;
-                case text.includes('kèo'):
-                    await turnContext.sendActivity(`Huỷ kèo đê :))`);
+                case key.includes('kèo'):
+                    responseText = `Huỷ kèo đê :))`;
+                    break;
+                case (key.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')):
+                    responseText = bichui[Math.floor(Math.random() * bichui.length)];
+                    break;
+                case key.includes('ơi'):
+                    responseText = `Dạ :v`;
+                    break;
+                case (key.includes('thằng nào') || text.includes('đứa nào') || text.includes('là ai')):
+                    responseText = `Em là nhơn ạ :v`;
+                    break;
+                case key.includes('nói'):
+                    responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
                     break;
                 default :
-                    if (text.substring(0, 7) === botname) {
-                        if (text.includes('kèo')) {
-                            responseText = `Huỷ kèo đê :))`;
-                        } else if (text.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')) {
-                            responseText = bichui[Math.floor(Math.random() * bichui.length)];
-                        } else if (text.includes('ơi')) {
-                            responseText = `Dạ :v`;
-                        } else if (text.includes('thằng nào') || text.includes('đứa nào') || text.includes('là ai')) {
-                            responseText = `Em là nhơn ạ :v`;
-                        } else if (text.includes('nói')) {
-                            responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
-                        }
-                    } else {
-                        responseText = text;
-                    }
-
-                    await turnContext.sendActivity(`${ responseText }`);
+                    await this.getSimSimiResponse(key).then(function(data) {
+                        responseText = data.response;
+                    });
                 }
+
+                await turnContext.sendActivity({ type: 'typing' });
+                await turnContext.sendActivity(`${ responseText }`);
             }
             // Save state changes
             await this.userState.saveChanges(turnContext);
@@ -841,12 +840,7 @@ class MyBot {
     async sendWelcomeMessage(turnContext) {
         // Do we have any new members added to the conversation?
         if (turnContext.activity.membersAdded.length !== 0) {
-            // Iterate over all new members added to the conversation
             for (let idx in turnContext.activity.membersAdded) {
-                // Greet anyone that was not the target (recipient) of this message.
-                // Since the bot is the recipient for events from the channel,
-                // context.activity.membersAdded === context.activity.recipient.Id indicates the
-                // bot was added to the conversation, and the opposite indicates this is a user.
                 if (turnContext.activity.membersAdded[idx].id !== turnContext.activity.recipient.id) {
                     await turnContext.sendActivity(`Hello :))`);
                     await turnContext.sendActivity('Chào mừng đến với chùa cụ tổ bà đanh (xd)');
