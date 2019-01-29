@@ -12,7 +12,7 @@ var http = require('http');
 const WELCOMED_USER = 'welcomedUserProperty';
 const botName = 'nhơn :v';
 
-const Request = require('request');
+// const Request = require('request');
 
 const simSimiUrl = 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=';
 // const simsimi = require('./simsimi')({
@@ -763,20 +763,20 @@ class MyBot {
         this.userState = userState;
     }
 
-    getSimSimiResponse(question) {
-        return new Promise(function(resolve, reject) {
-            Request.get({
-                'headers': { 'content-type': 'application/json' },
-                'url': 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=' + encodeURI(question)
-            }, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(JSON.parse(body));
-                }
-            });
-        });
-    };
+    // getSimSimiResponse(question) {
+    //     return new Promise(function(resolve, reject) {
+    //         Request.get({
+    //             'headers': { 'content-type': 'application/json' },
+    //             'url': 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=' + encodeURI(question)
+    //         }, (error, response, body) => {
+    //             if (error) {
+    //                 reject(error);
+    //             } else {
+    //                 resolve(JSON.parse(body));
+    //             }
+    //         });
+    //     });
+    // };
 
     /**
      *
@@ -792,9 +792,9 @@ class MyBot {
             // Your bot should proactively send a welcome message to a personal chat the first time
             // (and only the first time) a user initiates a personal chat with your bot.
             var text = turnContext.activity.text.toLowerCase();
-            await this.getSimSimiResponse(text.substring(8)).then(function(data) {
-                responseText = data.response;
-            });
+            // await this.getSimSimiResponse(text.substring(8)).then(function(data) {
+            //     responseText = data.response;
+            // });
 
             if (didBotWelcomedUser === false) {
                 // The channel should send the user name in the 'From' object
