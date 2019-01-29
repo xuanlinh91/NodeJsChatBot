@@ -10,7 +10,7 @@ const Request = require('request');
 
 // Welcomed User property name
 const WELCOMED_USER = 'welcomedUserProperty';
-
+const botname = 'nhơn :v';
 const swears = [
     'Đm :))',
     'Đm dũng ngáo :))',
@@ -735,6 +735,8 @@ const deadGroup = [
   ];
   `
 ];
+
+var responseText = '';
 class MyBot {
     /**
      *
@@ -774,12 +776,11 @@ class MyBot {
             // Read UserState. If the 'DidBotWelcomedUser' does not exist (first time ever for a user)
             // set the default to false.
             const didBotWelcomedUser = await this.welcomedUserProperty.get(turnContext, false);
-
+            let text = turnContext.activity.text.toLowerCase();
             // Your bot should proactively send a welcome message to a personal chat the first time
             // (and only the first time) a user initiates a personal chat with your bot.
             if (didBotWelcomedUser === false) {
                 // The channel should send the user name in the 'From' object
-                let userName = turnContext.activity.from.name;
                 await turnContext.sendActivity('Không ai nói gì à :v');
                 // await turnContext.sendActivity(`It is a good practice to welcome the user and provide personal greeting. For example, welcome ${ userName }.`);
 
@@ -788,7 +789,7 @@ class MyBot {
             } else {
                 // This example uses an exact match on user's input utterance.
                 // Consider using LUIS or QnA for Natural Language Processing.
-                let text = turnContext.activity.text.toLowerCase();
+
                 switch (text) {
                 case 'hello':
                     await turnContext.sendActivity(`Chào em :) ${ text }`);
@@ -797,19 +798,20 @@ class MyBot {
                     await turnContext.sendActivity(`Huỷ kèo đê :))`);
                     break;
                 default :
-                    if (text.substring(0, 7) == 'nhơn :v') {
+                    if (text.substring(0, 7) === botname) {
                         if (text.includes('kèo')) {
-                            var responseText = `Huỷ kèo đê :))`;
+                            responseText = `Huỷ kèo đê :))`;
                         } else if (text.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')) {
-                            var responseText = bichui[Math.floor(Math.random() * bichui.length)];
+                            responseText = bichui[Math.floor(Math.random() * bichui.length)];
                         } else if (text.includes('ơi')) {
-                            var responseText = `Dạ :v`;
+                            responseText = `Dạ :v`;
                         } else if (text.includes('thằng nào') || text.includes('đứa nào') || text.includes('là ai')) {
-                            var responseText = `Em là nhơn ạ :v`;
+                            responseText = `Em là nhơn ạ :v`;
                         } else if (text.includes('nói')) {
-                            var responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
+                            responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
                         } else {
-                            var responseText = text.substring(8) + ' con củ kẹc (xd)';
+                            // responseText = text.substring(8) + ' con củ kẹc (xd)';
+                            responseText = text;
                         }
                     } else {
                         responseText = text;
