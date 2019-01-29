@@ -814,9 +814,6 @@ class MyBot {
                             responseText = `Em là nhơn ạ :v`;
                         } else if (text.includes('nói')) {
                             responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
-                        } else {
-                            // responseText = text.substring(8) + ' con củ kẹc (xd)';
-                            responseText = text;
                         }
                     } else {
                         responseText = text;
