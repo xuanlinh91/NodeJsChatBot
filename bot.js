@@ -747,7 +747,7 @@ const deadGroup = [
   `
 ];
 
-var responseText = '';
+var responseText = 'con củ kẹc';
 
 class MyBot {
     /**
@@ -792,12 +792,8 @@ class MyBot {
             // Your bot should proactively send a welcome message to a personal chat the first time
             // (and only the first time) a user initiates a personal chat with your bot.
             var text = turnContext.activity.text.toLowerCase();
-            console.log(text);
-            console.log(text.substring(8));
             await this.getSimSimiResponse(text.substring(8)).then(function(data) {
                 responseText = data.response;
-                console.log(responseText);
-                // turnContext.sendActivity(`${ responseText }`);
             });
 
             if (didBotWelcomedUser === false) {
@@ -832,10 +828,7 @@ class MyBot {
                         } else if (text.includes('nói')) {
                             responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
                         } else {
-                            console.log('123');
-                            console.log(responseText);
                             await turnContext.sendActivity(`${ responseText }`);
-                            responseText = '';
                         }
                     } else {
                         await turnContext.sendActivity(`${ responseText }`);
