@@ -779,6 +779,11 @@ class MyBot {
             let text = turnContext.activity.text.toLowerCase();
             // Your bot should proactively send a welcome message to a personal chat the first time
             // (and only the first time) a user initiates a personal chat with your bot.
+
+            await this.getSimSimiResponse(text.substring(8)).then(function(data) {
+                responseText = data.response;
+            });
+
             if (didBotWelcomedUser === false) {
                 // The channel should send the user name in the 'From' object
                 await turnContext.sendActivity('Không ai nói gì à :v');
