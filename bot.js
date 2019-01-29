@@ -4,24 +4,13 @@
 // Import required Bot Framework classes.
 const { ActivityTypes } = require('botbuilder');
 const { CardFactory } = require('botbuilder');
-var http = require('http');
+const Request = require('request');
 // Adaptive Card content
 // const IntroCard = require('./resources/IntroCard.json');
 
 // Welcomed User property name
 const WELCOMED_USER = 'welcomedUserProperty';
-const botName = 'nhơn :v';
-
-// const Request = require('request');
-
-const simSimiUrl = 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=';
-// const simsimi = require('./simsimi')({
-//     key: 'abfa9e08-470e-4b20-9f44-8cc724766f64',
-//     api: 'http://sandbox.api.simsimi.com/request.p'
-// });
-
-// const simsimi = require('./simsimi.js');
-
+const botname = 'nhơn :v';
 const swears = [
     'Đm :))',
     'Đm dũng ngáo :))',
@@ -51,7 +40,7 @@ const deadGroup = [
     'Đéo còn ai ở group này nói chuyện với tôi cả, không còn ai...đi chung một đường....',
     'mưa rồi :(',
     'Thất bại :(',
-    'Ae chết cmn hết rồi à',,
+    'Ae chết cmn hết rồi à',
     `Đĩa đậu phộng
   Boris rủ bạn Vova đến thăm bà ngoại. Bà nhờ Boris sửa vòi nước trong bếp. Vova ngồi ngoài phòng khách chờ, tranh thủ nhấm nháp hết đĩa đậu phộng để trên bàn. Khi cùng bạn ra về, Vova cảm ơn bà và phân bua:
   - Cháu cảm ơn bà về đĩa đậu phộng. Cháu đã lỡ ăn hết không chừa lại một hạt nào cho bà.
@@ -747,8 +736,7 @@ const deadGroup = [
   `
 ];
 
-var responseText = 'con củ kẹc';
-
+var responseText = '';
 class MyBot {
     /**
      *
@@ -763,20 +751,20 @@ class MyBot {
         this.userState = userState;
     }
 
-    // getSimSimiResponse(question) {
-    //     return new Promise(function(resolve, reject) {
-    //         Request.get({
-    //             'headers': { 'content-type': 'application/json' },
-    //             'url': 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=' + encodeURI(question)
-    //         }, (error, response, body) => {
-    //             if (error) {
-    //                 reject(error);
-    //             } else {
-    //                 resolve(JSON.parse(body));
-    //             }
-    //         });
-    //     });
-    // };
+    getSimSimiResponse(question) {
+        return new Promise(function(resolve, reject) {
+            Request.get({
+                'headers': { 'content-type': 'application/json' },
+                'url': 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=' + encodeURI(question)
+            }, (error, response, body) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(JSON.parse(body));
+                }
+            });
+        });
+    };
 
     /**
      *
@@ -788,17 +776,16 @@ class MyBot {
             // Read UserState. If the 'DidBotWelcomedUser' does not exist (first time ever for a user)
             // set the default to false.
             const didBotWelcomedUser = await this.welcomedUserProperty.get(turnContext, false);
-
+            let text = turnContext.activity.text.toLowerCase();
             // Your bot should proactively send a welcome message to a personal chat the first time
             // (and only the first time) a user initiates a personal chat with your bot.
-            var text = turnContext.activity.text.toLowerCase();
-            // await this.getSimSimiResponse(text.substring(8)).then(function(data) {
-            //     responseText = data.response;
-            // });
+
+            await this.getSimSimiResponse(text.substring(8)).then(function(data) {
+                responseText = data.response;
+            });
 
             if (didBotWelcomedUser === false) {
                 // The channel should send the user name in the 'From' object
-                // let userName = turnContext.activity.from.name;
                 await turnContext.sendActivity('Không ai nói gì à :v');
                 // await turnContext.sendActivity(`It is a good practice to welcome the user and provide personal greeting. For example, welcome ${ userName }.`);
 
@@ -816,7 +803,7 @@ class MyBot {
                     await turnContext.sendActivity(`Huỷ kèo đê :))`);
                     break;
                 default :
-                    if (text.substring(0, 7).toLowerCase() === botName) {
+                    if (text.substring(0, 7) === botname) {
                         if (text.includes('kèo')) {
                             responseText = `Huỷ kèo đê :))`;
                         } else if (text.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')) {
@@ -827,12 +814,12 @@ class MyBot {
                             responseText = `Em là nhơn ạ :v`;
                         } else if (text.includes('nói')) {
                             responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
-                        } else {
-                            await turnContext.sendActivity(`${ responseText }`);
                         }
                     } else {
-                        await turnContext.sendActivity(`${ responseText }`);
+                        responseText = text;
                     }
+
+                    await turnContext.sendActivity(`${ responseText }`);
                 }
             }
             // Save state changes
