@@ -4,7 +4,7 @@
 // Import required Bot Framework classes.
 const { ActivityTypes } = require('botbuilder');
 const { CardFactory } = require('botbuilder');
-
+const Request = require('request');
 // Adaptive Card content
 // const IntroCard = require('./resources/IntroCard.json');
 
@@ -748,6 +748,22 @@ class MyBot {
 
         this.userState = userState;
     }
+
+    getSimSimiResponse(question) {
+        return new Promise(function(resolve, reject) {
+            Request.get({
+                'headers': { 'content-type': 'application/json' },
+                'url': 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=' + encodeURI(question)
+            }, (error, response, body) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(JSON.parse(body));
+                }
+            });
+        });
+    };
+
     /**
      *
      * @param {TurnContext} context on turn context object.
