@@ -781,7 +781,7 @@ class MyBot {
             // (and only the first time) a user initiates a personal chat with your bot.
 
             let key = text.substring(0, botname.length) === botname ? text.substring(botname.length + 1) : text;
-
+            // console.log(key);
             if (didBotWelcomedUser === false) {
                 // The channel should send the user name in the 'From' object
                 await turnContext.sendActivity('Không ai nói gì à :v');
@@ -792,9 +792,8 @@ class MyBot {
             } else {
                 // This example uses an exact match on user's input utterance.
                 // Consider using LUIS or QnA for Natural Language Processing.
-
-                switch (key) {
-                case 'hello':
+                switch (true) {
+                case key.includes('hello'):
                     await turnContext.sendActivity(`Chào em :) ${ text }`);
                     break;
                 case key.includes('kèo'):
