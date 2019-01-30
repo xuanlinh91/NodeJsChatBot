@@ -814,7 +814,7 @@ class MyBot {
                     break;
                 default :
                     await this.getSimSimiResponse(key).then(function(data) {
-                        responseText = data.response;
+                        responseText = data.result === 509 ? ':x' : data.response;
                     });
                 }
 
