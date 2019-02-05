@@ -11,6 +11,7 @@ const Request = require('request');
 // Welcomed User property name
 const WELCOMED_USER = 'welcomedUserProperty';
 const botname = 'nhơn :v';
+const rasaBotUrl = 'http://103.27.236.152:5005/webhooks/rest/webhook';
 const swears = [
     'Đm :))',
     'Đm dũng ngáo :))',
@@ -753,14 +754,17 @@ class MyBot {
 
     getSimSimiResponse(question) {
         return new Promise(function(resolve, reject) {
-            Request.get({
+            var jsonQuestion = { 'message': question };
+            Request.post({
                 'headers': { 'content-type': 'application/json' },
-                'url': 'http://sandbox.api.simsimi.com/request.p?key=abfa9e08-470e-4b20-9f44-8cc724766f64&lc=vn&ft=1.0&text=' + encodeURI(question)
+                'url': rasaBotUrl,
+                'body': jsonQuestion,
+                'json': true
             }, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(JSON.parse(body));
+                    resolve(body[0]);
                 }
             });
         });
@@ -792,30 +796,30 @@ class MyBot {
             } else {
                 // This example uses an exact match on user's input utterance.
                 // Consider using LUIS or QnA for Natural Language Processing.
-                switch (true) {
-                case key.includes('hello'):
-                    await turnContext.sendActivity(`Chào em :) ${ text }`);
-                    break;
-                case key.includes('kèo'):
-                    responseText = `Huỷ kèo đê :))`;
-                    break;
-                case (key.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')):
-                    responseText = bichui[Math.floor(Math.random() * bichui.length)];
-                    break;
-                case key.includes('ơi'):
-                    responseText = `Dạ :v`;
-                    break;
-                case (key.includes('thằng nào') || text.includes('đứa nào') || text.includes('là ai')):
-                    responseText = `Em là nhơn ạ :v`;
-                    break;
-                case key.includes('nói'):
-                    responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
-                    break;
-                default :
-                    await this.getSimSimiResponse(key).then(function(data) {
-                        responseText = data.result === 509 ? ':x' : data.response;
-                    });
-                }
+                // switch (true) {
+                // case key.includes('hello'):
+                //     await turnContext.sendActivity(`Chào em :) ${ text }`);
+                //     break;
+                // case key.includes('kèo'):
+                //     responseText = `Huỷ kèo đê :))`;
+                //     break;
+                // case (key.includes('dmm') || text.includes('đmm') || text.includes('dm') || text.includes('đm') || text.includes('địt')):
+                //     responseText = bichui[Math.floor(Math.random() * bichui.length)];
+                //     break;
+                // case key.includes('ơi'):
+                //     responseText = `Dạ :v`;
+                //     break;
+                // case (key.includes('thằng nào') || text.includes('đứa nào') || text.includes('là ai')):
+                //     responseText = `Em là nhơn ạ :v`;
+                //     break;
+                // case key.includes('nói'):
+                //     responseText = deadGroup[Math.floor(Math.random() * deadGroup.length)];
+                //     break;
+                // default :
+                await this.getSimSimiResponse(key).then(function(data) {
+                    responseText = typeof data === 'undefined' ? 'Đang code dở, chưa dùng được đâu (xd)' : data.text;
+                });
+                // }
 
                 await turnContext.sendActivity({ type: 'typing' });
                 await turnContext.sendActivity(`${ responseText }`);
